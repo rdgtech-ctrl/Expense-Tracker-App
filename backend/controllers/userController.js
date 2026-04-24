@@ -172,7 +172,7 @@ export async function updatePassword(req, res) {
     }
     try {
         const user = await User.findById(req.user.id).select("password");
-        if (!use) {
+        if (!user) {
             return res.status(400).json({
                 successs: false,
                 message: "User not found"
