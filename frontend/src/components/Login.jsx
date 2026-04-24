@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
-const Login = ({ onLogin, API_URL = "http://localhost:4000/api" }) => {
+const Login = ({ onLogin, API_URL = "http://localhost:4000" }) => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
@@ -82,10 +82,11 @@ const Login = ({ onLogin, API_URL = "http://localhost:4000/api" }) => {
             }
             setPassword("");
         } catch (err) {
-            console.error("Login error:", err?.respone || err);
+        
+            console.error("Login error:", err?.response || err);
             const serverMsg =
                 err.response?.data?.message ||
-                (err.respone?.data ? JSON.stringify(err.respone.data) : null) || err.message ||
+                (err.response?.data ? JSON.stringify(err.response.data) : null) || err.message ||
                 "Login failed"
             setError(serverMsg);
         } finally {
@@ -144,7 +145,7 @@ const Login = ({ onLogin, API_URL = "http://localhost:4000/api" }) => {
                         </div>
 
                         <div className="mb-6">
-                            <label htmlFor="passwordl" className={loginStyles.label} >
+                            <label htmlFor="password" className={loginStyles.label} >
                                 Password
                             </label>
                             <div className={loginStyles.inputContainer}>
@@ -182,7 +183,7 @@ const Login = ({ onLogin, API_URL = "http://localhost:4000/api" }) => {
                                 onChange={(e) => setRememberMe(e.target.checked)}
                                 className={loginStyles.checkbox}
                                 placeholder='●●●●●●●●'
-                                required
+                                
                             />
                             <label htmlFor="remember" className={loginStyles.checkboxLabel}>
                                 Remember Me
