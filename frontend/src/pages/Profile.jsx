@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { profileStyles } from '../assets/dummyStyles'
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
-import { User, EyeOff, Eye } from 'lucide-react';
+import { User, EyeOff, Eye, Lock, X } from 'lucide-react';
 import { memo } from 'react';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
@@ -10,7 +10,6 @@ import { toast, Toaster } from 'react-hot-toast';
 
 const BASE_URL = 'http://localhost:4000/api';
 
-Modal.setAppElement('#root');
 
 // Move PasswordInput component outside of ProfilePage to prevent recreation on every render
 const PasswordInput = memo(({ name, label, value, error, showField, onToggle, onChange, disabled }) => (
@@ -102,6 +101,8 @@ const Profile = ({ user: initialUser, onLogout, onUpdateProfile }) => {
 
     // to fetch current user
     useEffect(() => {
+        Modal.setAppElement('#root');
+
         const fetchUserData = async () => {
             try {
                 const data = await handleApiRequest("get", "/user/me");
@@ -283,12 +284,127 @@ const Profile = ({ user: initialUser, onLogout, onUpdateProfile }) => {
                                         <p className={profileStyles.label}>Full Name</p>
                                         <p className="font-medium text-gray-800">{user.name}</p>
                                     </div>
+
+                                    <div>
+                                        <p className={profileStyles.label}>Email Address</p>
+                                        <p className="font-medium text-gray-800">{user.email}</p>
+                                    </div>
                                 </div>
                             )}
+                        </div>
+
+                        <div className={profileStyles.card}>
+                            <h2 className={profileStyles.cardTitle}>
+                                <Lock className={profileStyles.icon} />
+                                Account Security
+                            </h2>
+
+                            <div className="space-y-4">
+                                <div className={profileStyles.securityItem}>
+                                    <div>
+                                        <p className={profileStyles.securityText}>Password</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowPassword(true)}
+                                        className={profileStyles.changeButton}
+                                        disabled={loading}
+                                    >
+                                        Change
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleLogout}
+                                className={`${profileStyles.buttonPrimary} mt-6 w-full hover:opacity-90 transition-opacity`}
+                                disabled={loading}
+                            >
+                                {loading ? "Processing..." : "Logout"}
+                            </button>
+
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* change password */}
+            <Modal
+                isOpen={showPasswordModal}
+                onRequestClose={closePasswordModal}
+                contentLabel="Change Password"
+                className="modal"
+                overlayClassName="modal-overlay"
+                // Prevent unnecessary re-renders
+                shouldCloseOnOverlayClick={!loading}
+                shouldCloseOnEsc={!loading}
+            >
+                <div className={profileStyles.modalContent}>
+                    <div className={profileStyles.modalHeader}>
+                        <h3 className={profileStyles.modalTitle}>Change Password</h3>
+                        <button
+                            onClick={closePasswordModal}
+                            className="text-gray-500 hover:text-gray-800 disabled:opacity-50"
+                            disabled={loading}
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+                    </div>
+
+                    <form onSubmit={handlePasswordSubmit} className="space-y-4 lg:-mx-20">
+                        <PasswordInput
+                            name="current"
+                            label="Current Password"
+                            value={passwordData.current}
+                            error={passwordErrors.current}
+                            showField={showPassword.current}
+                            onToggle={() => togglePasswordVisibility('current')}
+                            onChange={handlePasswordChange}
+                            disabled={loading}
+                        />
+
+                        <PasswordInput
+                            name="new"
+                            label="New Password"
+                            value={passwordData.new}
+                            error={passwordErrors.new}
+                            showField={showPassword.new}
+                            onToggle={() => togglePasswordVisibility('new')}
+                            onChange={handlePasswordChange}
+                            disabled={loading}
+                        />
+
+                        <PasswordInput
+                            name="confirm"
+                            label="Confirm New Password"
+                            value={passwordData.confirm}
+                            error={passwordErrors.confirm}
+                            showField={showPassword.confirm}
+                            onToggle={() => togglePasswordVisibility('confirm')}
+                            onChange={handlePasswordChange}
+                            disabled={loading}
+                        />
+
+                        <div className="flex gap-3 pt-4">
+                            <button
+                                type="submit"
+                                className={profileStyles.buttonPrimary}
+                                disabled={loading}
+                            >
+                                {loading ? 'Updating...' : 'Update Password'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={closePasswordModal}
+                                className={profileStyles.buttonSecondary}
+                                disabled={loading}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
+
         </div>
     );
 };
