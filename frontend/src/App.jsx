@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom'
 import { Navigate } from 'react-router-dom'
 import Income from './pages/Income'
 import Expense from './pages/Expense'
+import Profile from './pages/Profile'
 const API_URL = "http://localhost:4000"
 
 // to get transaction from localstorage
@@ -243,7 +244,7 @@ const App = () => {
           }
           />
 
-           <Route path="/expense" element={
+          <Route path="/expense" element={
             <Expense
               transactions={transactions}
               addTransaction={addTransaction}
@@ -253,7 +254,21 @@ const App = () => {
             />
           }
           />
+
+          <Route path="/profile" element={
+            <Profile
+              user={user}
+              onUpdateProfile={updateUserData}
+              onLogout={handleLogout}
+            />
+          }
+          />
         </Route>
+
+        <Route
+          path="*"
+          element={<Navigate to={user ? "/" : "/login"} replace />}
+        />
       </Routes >
     </>
   )
