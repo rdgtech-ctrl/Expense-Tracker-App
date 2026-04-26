@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Routes, useNavigate, useRouteLoaderData } from "react-router-dom"
+import { Route, Routes, useNavigate } from "react-router-dom"
 import Layout from "./components/Layout"
 import Dashboard from './pages/Dashboard'
 import { useState, useEffect } from 'react'
@@ -10,6 +10,8 @@ import { Navigate } from 'react-router-dom'
 import Income from './pages/Income'
 import Expense from './pages/Expense'
 import Profile from './pages/Profile'
+import axios from 'axios'
+
 const API_URL = "http://localhost:4000"
 
 // to get transaction from localstorage
@@ -17,11 +19,6 @@ const getTransactionsFromStorage = () => {
   const saved = localStorage.getItem("transactions");
   return saved ? JSON.parse(saved) : [];
 };
-// if (saved) {
-//     return JSON.parse(saved);  // parse the JSON string back into an array
-// } else {
-//     return [];                 // return empty array if nothing in storage
-// }
 
 // to protect the routes
 const ProtectedRoute = ({ user, children }) => {
@@ -77,8 +74,8 @@ const App = () => {
     try {
       localStorage.removeItem("user")
       localStorage.removeItem("token")
-      localStorage.removeItem("user")
-      localStorage.removeItem("token")
+      sessionStorage.removeItem("user")
+      sessionStorage.removeItem("token")
     } catch (err) {
       console.error("clearAuth error:", err)
     }
@@ -112,7 +109,7 @@ const App = () => {
         const storedUser = localUserRaw
           ? JSON.parse(localUserRaw)
           : sessionUserRaw
-            ? JSON.parse(sesssionUserRaw)
+            ? JSON.parse(sessionUserRaw)
             : null;
 
         const storedToken = localToken || sessionToken || null;
@@ -134,8 +131,8 @@ const App = () => {
             persistAuth(profile, storedToken, tokenFromLocal);
           }
           catch (fetchErr) {
-            console.warn("Could nnot fetch profile with the stored token:", fetchErr)
-            clearAuth(); // clears invalid/expired token and user from localStorage
+            console.warn("Could not fetch profile with the stored token:", fetchErr)
+            clearAuth();
           }
         }
 
@@ -176,7 +173,6 @@ const App = () => {
     clearAuth();
     navigate("/login");
   };
-
 
   // transaction helpers
   const addTransaction = (newTransaction) =>
@@ -269,7 +265,7 @@ const App = () => {
           path="*"
           element={<Navigate to={user ? "/" : "/login"} replace />}
         />
-      </Routes >
+      </Routes>
     </>
   )
 }
