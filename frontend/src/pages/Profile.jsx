@@ -219,6 +219,17 @@ const Profile = ({ user: initialUser, onLogout, onUpdateProfile }) => {
         navigate('/signup');
     }, [onLogout, navigate]);
 
+    const closePasswordModal = useCallback(() => {
+        if (!loading) {
+            setShowPasswordModal(false)
+            setPasswordData({ current: "", new: "", confirm: "" });
+            setPasswordErrors({});
+
+            // reset password visibility
+            setShowPassword({ current: false, new: false, confirm: false })
+        }
+    });
+
     return <div></div>;
 };
 
