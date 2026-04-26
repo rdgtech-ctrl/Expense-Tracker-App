@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { profileStyles } from '../assets/dummyStyles'
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
-import { EyeOff, Eye } from 'lucide-react';
+import { User, EyeOff, Eye } from 'lucide-react';
 import { memo } from 'react';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
@@ -228,9 +228,60 @@ const Profile = ({ user: initialUser, onLogout, onUpdateProfile }) => {
             // reset password visibility
             setShowPassword({ current: false, new: false, confirm: false })
         }
-    });
+    }, [loading]);
+    // this is a useEffect that resets the password visibility whenever loading changes
 
-    return <div></div>;
+    return
+    <div className={profileStyles.container}>
+        {/* Toast container */}
+        <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false} // toast goes from left to right
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+        />
+
+        <div className={profileStyles.mainContainer}>
+            <div className={profileStyles.header}>
+                <div className={profileStyles.avatar}>
+                    <User className="w-12 h-12 text-white" />
+                </div>
+                <h1 className={profileStyles.userName}>
+                    {user.name || "Loading..."}
+                </h1>
+                <p className={profileStyles.userEmail}>
+                    {user.email || "Loading..."}
+                </p>
+            </div>
+
+            <div className={profileStyles.content}>
+                <div className={profileStyles.grid}>
+                    <div className={profileStyles.card}>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className={profileStyles.cardTitle}>
+                                <User className={profileStyles.icon} />
+                                Personal Information
+                            </h2>
+                            {!editMode && (
+                                <button
+                                    onClick={() => setEditMode(true)}
+                                    className={profileStyles.editButton}
+                                    disabled={loading}
+                                >
+                                    {loading ? "Loading..." : "Edit"}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 };
 
 export default Profile;
