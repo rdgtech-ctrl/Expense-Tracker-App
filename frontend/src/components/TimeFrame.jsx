@@ -31,10 +31,14 @@ const TimeFrameSelector = ({
           }`}
         >
           {frame.charAt(0).toUpperCase() + frame.slice(1)}
-        </button>
+          {/* slice(1) cuts a string starting from index 1,which means it skips the first character and returns the rest. */}
+        </button> 
       ))}
     </div>
   );
 };
 
 export default TimeFrameSelector;
+
+// it shows the 3 boxes with the details
+// like Total Income,Average Income, Transactions
