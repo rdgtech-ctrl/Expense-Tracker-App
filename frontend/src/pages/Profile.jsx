@@ -6,7 +6,7 @@ import { User, EyeOff, Eye } from 'lucide-react';
 import { memo } from 'react';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 const BASE_URL = 'http://localhost:4000/api';
 
@@ -151,7 +151,6 @@ const Profile = ({ user: initialUser, onLogout, onUpdateProfile }) => {
             }
         } catch (err) {
             toast.error(err.response?.data?.message || "Failed to update profile")
-            // ?. is called optional chaining-it means 'if this exists,go deeper,if not just return undefined instead of crashing.
         }
     }
 
@@ -175,24 +174,13 @@ const Profile = ({ user: initialUser, onLogout, onUpdateProfile }) => {
         }
         setPasswordErrors(errors);
         return Object.keys(errors).length === 0;
-        //     // When there ARE errors
-        // errors = { current: "Required", new: "Too short", confirm: "" }
-        // Object.keys(errors)        // ["current", "new", "confirm"]
-        // Object.keys(errors).length // 3
-        // 3 === 0                    // false → validation failed
-
-        // // When there are NO errors
-        // errors = {}
-        // Object.keys(errors)        // []
-        // Object.keys(errors).length // 0
-        // 0 === 0                    // true → validation passed
     }, [passwordData]);
 
 
     //to change password
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
-        if (!validatePassword) return;
+        if (!validatePassword()) return;
 
 
         try {
@@ -231,57 +219,78 @@ const Profile = ({ user: initialUser, onLogout, onUpdateProfile }) => {
     }, [loading]);
     // this is a useEffect that resets the password visibility whenever loading changes
 
-    return
-    <div className={profileStyles.container}>
-        {/* Toast container */}
-        <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false} // toast goes from left to right
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-        />
+    return (
+        <div className={profileStyles.container}>
+            {/* Toast container */}
+            <Toaster position="top-right" />
 
-        <div className={profileStyles.mainContainer}>
-            <div className={profileStyles.header}>
-                <div className={profileStyles.avatar}>
-                    <User className="w-12 h-12 text-white" />
+            <div className={profileStyles.mainContainer}>
+                <div className={profileStyles.header}>
+                    <div className={profileStyles.avatar}>
+                        <User className="w-12 h-12 text-white" />
+                    </div>
+                    <h1 className={profileStyles.userName}>
+                        {user.name || "Loading..."}
+                    </h1>
+                    <p className={profileStyles.userEmail}>
+                        {user.email || "Loading..."}
+                    </p>
                 </div>
-                <h1 className={profileStyles.userName}>
-                    {user.name || "Loading..."}
-                </h1>
-                <p className={profileStyles.userEmail}>
-                    {user.email || "Loading..."}
-                </p>
-            </div>
 
-            <div className={profileStyles.content}>
-                <div className={profileStyles.grid}>
-                    <div className={profileStyles.card}>
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className={profileStyles.cardTitle}>
-                                <User className={profileStyles.icon} />
-                                Personal Information
-                            </h2>
-                            {!editMode && (
-                                <button
-                                    onClick={() => setEditMode(true)}
-                                    className={profileStyles.editButton}
-                                    disabled={loading}
-                                >
-                                    {loading ? "Loading..." : "Edit"}
-                                </button>
+                <div className={profileStyles.content}>
+                    <div className={profileStyles.grid}>
+                        <div className={profileStyles.card}>
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className={profileStyles.cardTitle}>
+                                    <User className={profileStyles.icon} />
+                                    Personal Information
+                                </h2>
+                                {!editMode && (
+                                    <button
+                                        onClick={() => setEditMode(true)}
+                                        className={profileStyles.editButton}
+                                        disabled={loading}
+                                    >
+                                        {loading ? "Loading..." : "Edit"}
+                                    </button>
+                                )}
+                            </div>
+
+                            {editMode ? (
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className={profileStyles.label}>Full Name</label>
+                                        <input type="text" name="name" value={tempUser.name} onChange={handleInputChange} className={profileStyles.input} disabled={loading} />
+                                    </div>
+                                    <div>
+                                        <label className={profileStyles.label}>Email Address</label>
+                                        <input type="email" name="email" value={tempUser.email} onChange={handleInputChange} className={profileStyles.input} disabled={loading} />
+                                    </div>
+
+                                    <div className="flex gap-3 pt-4">
+                                        <button onClick={handleSaveProfile} className={profileStyles.buttonPrimary} disabled={loading}>
+                                            {loading ? "Saving..." : "Save Changes"}
+                                        </button>
+
+                                        <button onClick={handleCancelEdit} className={profileStyles.buttonSecondary} disabled={loading}>
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <div>
+                                        <p className={profileStyles.label}>Full Name</p>
+                                        <p className="font-medium text-gray-800">{user.name}</p>
+                                    </div>
+                                </div>
                             )}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    );
 };
 
 export default Profile;
