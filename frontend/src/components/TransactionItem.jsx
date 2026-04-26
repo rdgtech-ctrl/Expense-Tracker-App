@@ -1,4 +1,5 @@
 import React from 'react'
+import { useState } from 'react';
 import { transactionItemStyles } from '../assets/dummyStyles'
 import { colorClasses } from '../assets/color'
 import { Save, X, Edit, Trash2, DollarSign } from 'lucide-react';
