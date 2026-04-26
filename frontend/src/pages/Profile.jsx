@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { EyeOff, Eye } from 'lucide-react';
 import { memo } from 'react';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const BASE_URL = 'http://localhost:4000/api';
@@ -134,6 +135,89 @@ const Profile = ({ user: initialUser, onLogout, onUpdateProfile }) => {
     const togglePasswordVisibility = useCallback((field) => {
         setShowPassword(prev => ({ ...prev, [field]: !prev[field] }));
     }, []);
+
+    // save profile
+    const handleSaveProfile = async () => {
+        try {
+            const data = await handleApiRequest("put", "/user/profile", tempUser);
+            if (data) {
+                const updatedUser = data.user || data;
+                setUser(updatedUser);
+                setTempUser(updatedUser);
+                setEditMode(false);
+
+                onUpdateProfile?.(updatedUser)
+                toast.success("Profile updated successfully!")
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Failed to update profile")
+            // ?. is called optional chaining-it means 'if this exists,go deeper,if not just return undefined instead of crashing.
+        }
+    }
+
+    const handleCancelEdit = useCallback(() => {
+        setTempUser(user)
+        setEditMode(false)
+    }, [user]);
+
+    // password validation
+    // Password validation
+    const validatePassword = useCallback(() => {
+        const errors = {};
+        if (!passwordData.current) errors.current = 'Current password is required';
+        if (!passwordData.new) {
+            errors.new = 'New password is required';
+        } else if (passwordData.new.length < 8) {
+            errors.new = 'Password must be at least 8 characters';
+        }
+        if (passwordData.new !== passwordData.confirm) {
+            errors.confirm = 'Passwords do not match';
+        }
+        setPasswordErrors(errors);
+        return Object.keys(errors).length === 0;
+        //     // When there ARE errors
+        // errors = { current: "Required", new: "Too short", confirm: "" }
+        // Object.keys(errors)        // ["current", "new", "confirm"]
+        // Object.keys(errors).length // 3
+        // 3 === 0                    // false → validation failed
+
+        // // When there are NO errors
+        // errors = {}
+        // Object.keys(errors)        // []
+        // Object.keys(errors).length // 0
+        // 0 === 0                    // true → validation passed
+    }, [passwordData]);
+
+
+    //to change password
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        if (!validatePassword) return;
+
+
+        try {
+            await handleApiRequest("put", "/user/password", {
+                currentPassword: passwordData.current,
+                newPassword: passwordData.new
+            })
+
+            toast.success("Password changed successfully!");
+            setShowPassword(false)
+            setPasswordData({ current: "", new: "", confirm: "" });
+            setPasswordErrors({});
+
+            // reset password visibility
+            setShowPassword({ current: false, new: false, confirm: false })
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to change profile");
+        }
+    };
+
+    const handleLogout = useCallback(() => {
+        onLogout?.();
+        // if onLogout exists,call it. If not , do nothing
+        navigate('/signup');
+    }, [onLogout, navigate]);
 
     return <div></div>;
 };
