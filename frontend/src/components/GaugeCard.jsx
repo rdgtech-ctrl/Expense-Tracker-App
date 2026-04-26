@@ -31,12 +31,12 @@ const GaugeCard = ({
       <h3 className={`text-lg font-semibold mb-4 ${textColor}`}>
         {name}
       </h3>
-      <div className="w-full h-48">
+      <div className="w-full h-48"  style={{ width: "100%", height: 200 }}>
         <ResponsiveContainer>
           <RadialBarChart
             data={[{...gauge, value: chartValue}]}
             cx="50%"
-            cy="40%"
+            cy="50%"
             startAngle={180}
             endAngle={0}
             innerRadius="70%"

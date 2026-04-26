@@ -510,7 +510,7 @@ const Layout = ({ onLogout, user }) => {
                           />
                         )}
                       </div>
-                      <span className={style.categories.categoryName}>
+                      <span className={styles.categories.categoryName}>
                         {category}
                       </span>
                     </div>

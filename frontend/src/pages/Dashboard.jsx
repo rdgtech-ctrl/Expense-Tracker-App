@@ -17,12 +17,13 @@ import {
 import axios from "axios"
 import FinancialCard from '../components/FinancialCard'
 import GaugeCard from '../components/GaugeCard'
+import AddTransactionModal from '../components/Add'
 
 const API_BASE = "http://localhost:4000/api";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token") || localStorage.getItem("authToken");
-  return token ? { Authorization: `Bearer ${token} ` } : {};
+  return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
 function toIsoWithClientTime(dateValue) {
@@ -407,7 +408,7 @@ const Dashboard = () => {
             <span className={dashboardStyles.listSubtitle}> ({timeFrameRange.label})</span>
           </h3>
         </div>
-        <div className={dashboardStyles.pieChartHeight}>
+        <div style={{ width: "100%", height: 300 }} className={dashboardStyles.pieChartHeight}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart className={chartStyles.pieChart}>
               <Pie
@@ -527,6 +528,16 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      <AddTransactionModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        newTransaction={newTransaction}
+        setNewTransaction={setNewTransaction}
+        handleAddTransaction={handleAddTransaction}
+        loading={loading}
+      />
+
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { modalStyles } from '../assets/dummyStyles'
+import { X } from 'lucide-react';
 
 const AddTransactionModal = ({
     showModal,
@@ -127,7 +128,7 @@ const AddTransactionModal = ({
                                 type="date"
                                 value={newTransaction.date}
                                 onChange={(e) =>
-                                    newTransaction((prev) => ({
+                                    setNewTransaction((prev) => ({
                                         ...prev,
                                         // ...prev is says that "keep everything, only change this one field"
                                         // if not used then description,amount,category all are lost
