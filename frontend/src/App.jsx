@@ -8,6 +8,7 @@ import Signup from './components/Signup'
 import { useLocation } from 'react-router-dom'
 import { Navigate } from 'react-router-dom'
 import Income from './pages/Income'
+import Expense from './pages/Expense'
 const API_URL = "http://localhost:4000"
 
 // to get transaction from localstorage
@@ -233,6 +234,17 @@ const App = () => {
 
           <Route path="/income" element={
             <Income
+              transactions={transactions}
+              addTransaction={addTransaction}
+              editTransaction={editTransaction}
+              deleteTransaction={deleteTransaction}
+              refreshTransactions={refreshTransactions}
+            />
+          }
+          />
+
+           <Route path="/expense" element={
+            <Expense
               transactions={transactions}
               addTransaction={addTransaction}
               editTransaction={editTransaction}
