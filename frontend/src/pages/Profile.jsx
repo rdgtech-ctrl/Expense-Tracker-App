@@ -116,6 +116,25 @@ const Profile = ({ user: initialUser, onLogout, onUpdateProfile }) => {
         fetchUserData();
     }, [handleApiRequest]);
 
+    // handle input changes
+    // Input change handlers
+    const handleInputChange = useCallback((e) => {
+        const { name, value } = e.target;
+        setTempUser(prev => ({ ...prev, [name]: value }));
+    }, []);
+
+    const handlePasswordChange = useCallback((e) => {
+        const { name, value } = e.target;
+        setPasswordData(prev => ({ ...prev, [name]: value }));
+        // Clear error for this field when user starts typing
+        setPasswordErrors(prev => ({ ...prev, [name]: '' }));
+    }, []);
+
+    // Password visibility toggle
+    const togglePasswordVisibility = useCallback((field) => {
+        setShowPassword(prev => ({ ...prev, [field]: !prev[field] }));
+    }, []);
+
     return <div></div>;
 };
 
